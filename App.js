@@ -1,15 +1,16 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import HomeScreen from '../src/screens/HomeScreen';
-import PixScreen from '../src/screens/PixScreen';
+import HomeScreen from './src/screens/HomeScreen';
+import PixScreen from './src/screens/PixScreen';
 import { MaterialIcons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { NavigationContainer } from '@react-navigation/native';
 
 const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
-    <NavigatorConteiner>
+    <NavigationContainer>
       <Tab.Navigator>
       <Tab.Screen 
        name="Home" 
@@ -32,6 +33,6 @@ export default function App() {
       }} 
     />
     </Tab.Navigator>
-  </NavigatorConteiner>
+  </NavigationContainer>
   );
 }
