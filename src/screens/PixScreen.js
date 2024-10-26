@@ -1,70 +1,46 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, Alert } from 'react-native';
+import { useTheme } from 'styled-components/native';
 
-export default function PixScreen() {
-  const [valor, setValor] = useState('');
-  const [mensagem, setMensagem] = useState('');
+export default function PixScreen({ balance, setBalance, toggleTheme }) {
+  const [pixAmount, setPixAmount] = useState('');
+  const theme = useTheme();
 
-  const realizarPix = () => {
-    if (valor) {
-      setMensagem(`PIX de R$ ${valor} enviado com sucesso!`);
-    } else {
-      setMensagem('Por favor, insira um valor válido.');
+  const handlePix = () => {
+    const amount = parseFloat(pixAmount);
+    if (isNaN(amount) || amount <= 0) {
+      Alert.alert('Erro', 'Insira um valor válido para o Pix.');
+      return;
     }
+    if (amount > balance) {
+      Alert.alert('Erro', 'Saldo insuficiente.');
+      return;
+    }
+    setBalance((prevBalance) => prevBalance - amount);
+    setPixAmount('');
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.pixTexto}>Realizar PIX</Text>
+    <View style={{ flex: 1, backgroundColor: theme.background, padding: 20 }}>
+      <Text style={{ color: theme.text, fontSize: 18 }}>Saldo: R$ {balance.toFixed(2)}</Text>
       <TextInput
-        style={styles.input}
-        placeholder="Digite o valor do PIX"
+        style={{
+          borderWidth: 1,
+          borderColor: theme.border,
+          padding: 10,
+          marginVertical: 10,
+          color: theme.text,
+          backgroundColor: theme.secondary,
+        }}
+        placeholder="Valor do Pix"
+        placeholderTextColor={theme.icon}
         keyboardType="numeric"
-        value={valor}
-        onChangeText={setValor}
+        value={pixAmount}
+        onChangeText={setPixAmount}
       />
-      <TouchableOpacity
-        style={styles.botaoPix}
-        onPress={realizarPix}>
-        <Text style={styles.botaoTexto}>Enviar PIX</Text>
-      </TouchableOpacity>
-      {mensagem ? <Text style={styles.mensagem}>{mensagem}</Text> : null}
+      <Button title="Realizar Pix" onPress={handlePix} color={theme.primary} />
+      <Button title="Alternar Tema" onPress={toggleTheme} color={theme.primary} style={{ marginTop: 20 }} />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#fff',
-  },
-  pixTexto: {
-    fontSize: 20,
-    marginBottom: 10,
-  },
-  input: {
-    height: 50,
-    width: '80%',
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 5,
-    marginBottom: 20,
-    paddingHorizontal: 10,
-  },
-  botaoPix: {
-    backgroundColor: '#FF0000', // Vermelho Santander
-    padding: 15,
-    borderRadius: 10,
-  },
-  botaoTexto: {
-    color: '#fff',
-    fontSize: 18,
-  },
-  mensagem: {
-    marginTop: 20,
-    fontSize: 16,
-    color: '#00a650', // Verde de confirmação
-  },
-});
